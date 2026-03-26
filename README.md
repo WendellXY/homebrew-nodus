@@ -1,6 +1,6 @@
 # homebrew-nodus
 
-Official Homebrew tap scaffold for Nodus.
+Official Homebrew tap for Nodus.
 
 ## User install
 
@@ -17,37 +17,38 @@ brew tap WendellXY/nodus
 brew install nodus
 ```
 
-## Tap repository layout
-
-Create a separate GitHub repository named `homebrew-nodus`, then copy these paths into it:
-
-```text
-Formula/nodus.rb
-README.md
-```
-
-Homebrew resolves `brew tap WendellXY/nodus` to `https://github.com/WendellXY/homebrew-nodus`.
-
 ## Maintainer release flow
 
-1. Publish a GitHub Release with the binary archives created by the main repository release workflow.
-2. In the main `nodus` repository, run:
+After publishing `nodus` release assets on GitHub, update the tap with:
 
 ```bash
-./packaging/homebrew-nodus/scripts/update-formula.sh
+./scripts/update-formula.sh v0.3.4
 ```
 
-3. Copy the updated `Formula/nodus.rb` into the `homebrew-nodus` repository.
-4. Commit and push the tap repo.
-5. Validate locally:
+What this does:
+
+- fetches the published release checksums from GitHub
+- updates `Formula/nodus.rb` to the new current version
+- creates a versioned formula like `Formula/nodus@0.3.3.rb` when bumping from the previous current version
+- keeps Linux arm64 support when that release asset exists
+- falls back to no Linux arm64 support when a release does not publish that asset
+
+## Validate locally
 
 ```bash
-brew install --build-from-source ./Formula/nodus.rb
+ruby -c Formula/nodus.rb
+brew install --formula ./Formula/nodus.rb
 brew test nodus
+```
+
+If a versioned formula was created, you can also validate it:
+
+```bash
+ruby -c Formula/nodus@0.3.3.rb
 ```
 
 ## Notes
 
 - The formula installs prebuilt GitHub Release archives instead of compiling with Rust.
 - `generate_completions_from_executable` installs shell completions from `nodus completion`.
-- If you want Homebrew to build bottles automatically, initialize the tap with `brew tap-new WendellXY/nodus` and keep its default GitHub Actions workflows.
+- Homebrew resolves `brew tap WendellXY/nodus` to `https://github.com/WendellXY/homebrew-nodus`.
