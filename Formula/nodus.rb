@@ -25,9 +25,9 @@ class Nodus < Formula
   end
 
   def install
-    bin.install Dir["*/nodus"].first => "nodus"
+    bin.install "nodus"
     generate_completions_from_executable(bin/"nodus", "completion")
-    doc.install Dir["*/README.md"].first if Dir["*/README.md"].any?
+    doc.install "README.md" if File.exist?("README.md")
   end
 
   test do
